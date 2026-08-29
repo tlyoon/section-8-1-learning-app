@@ -1,6 +1,9 @@
 const DEFAULT_PACKAGE = document.querySelector("#app").dataset.packageUrl || "../content/chapter-1/section-1-1/package.json";
 const state = { package: null, activityIndex: 0, locale: "en", response: null, checked: false, hint: false, loading: false };
 let loadGeneration = 0;
+const requestedActivityId = typeof location === "undefined"
+  ? null
+  : new URLSearchParams(location.search).get("activity");
 
 const copy = {
   en: { activity: "Activity", of: "of", check: "Check answer", next: "Next activity", tryAgain: "Try again", restart: "Start again", hint: "Show a hint", complete: "Journey complete", correct: "That reasoning fits.", retry: "Reconsider the relationship and try again.", moveUp: "Move up", moveDown: "Move down", position: "Position" },
@@ -225,6 +228,9 @@ async function loadPackage(packageUrl = DEFAULT_PACKAGE) {
     const loadedPackage = await response.json();
     if (generation !== loadGeneration) return;
     state.package = loadedPackage;
+    const requestedIndex = loadedPackage.activities.findIndex((activity) => activity.id === requestedActivityId);
+    state.activityIndex = requestedIndex >= 0 ? requestedIndex : 0;
+    resetActivity();
     state.loading = false;
     localeSelector.disabled = false;
     render();
