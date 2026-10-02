@@ -1,17 +1,44 @@
-const DEFAULT_PACKAGE = document.querySelector("#app").dataset.packageUrl || "../content/chapter-1/section-1-1/package.json";
+const DEFAULT_PACKAGE = document.querySelector("#app").dataset.packageUrl || "";
 const state = { package: null, activityIndex: 0, locale: "en", response: null, checked: false, hint: false, loading: false };
 let loadGeneration = 0;
-const requestedActivityId = typeof location === "undefined"
-  ? null
-  : new URLSearchParams(location.search).get("activity");
 
 const copy = {
-  en: { activity: "Activity", of: "of", check: "Check answer", next: "Next activity", tryAgain: "Try again", restart: "Start again", hint: "Show a hint", complete: "Journey complete", correct: "That reasoning fits.", retry: "Reconsider the relationship and try again.", moveUp: "Move up", moveDown: "Move down", position: "Position" },
-  ms: { activity: "Aktiviti", of: "daripada", check: "Semak jawapan", next: "Aktiviti seterusnya", tryAgain: "Cuba lagi", restart: "Mula semula", hint: "Tunjukkan petunjuk", complete: "Perjalanan selesai", correct: "Penaakulan itu sesuai.", retry: "Pertimbangkan semula hubungan itu dan cuba lagi.", moveUp: "Alih ke atas", moveDown: "Alih ke bawah", position: "Kedudukan" },
-  zh: { activity: "活动", of: "/", check: "检查答案", next: "下一个活动", tryAgain: "再试一次", restart: "重新开始", hint: "显示提示", complete: "学习旅程完成", correct: "这个推理是恰当的。", retry: "重新思考其中的关系，然后再试一次。", moveUp: "上移", moveDown: "下移", position: "位置" },
+  en: { activity: "Activity", of: "of", check: "Check answer", next: "Next activity", tryAgain: "Try again", restart: "Start again", hint: "Show a hint", complete: "Journey complete", correct: "That reasoning fits.", retry: "Reconsider the relationship and try again.", moveUp: "Move up", moveDown: "Move down", position: "Position", skip: "Skip" },
+  ms: { activity: "Aktiviti", of: "daripada", check: "Semak jawapan", next: "Aktiviti seterusnya", tryAgain: "Cuba lagi", restart: "Mula semula", hint: "Tunjukkan petunjuk", complete: "Perjalanan selesai", correct: "Penaakulan itu sesuai.", retry: "Pertimbangkan semula hubungan itu dan cuba lagi.", moveUp: "Alih ke atas", moveDown: "Alih ke bawah", position: "Kedudukan", skip: "Langkau" },
+  zh: { activity: "活动", of: "/", check: "检查答案", next: "下一个活动", tryAgain: "再试一次", restart: "重新开始", hint: "显示提示", complete: "学习旅程完成", correct: "这个推理是恰当的。", retry: "重新思考其中的关系，然后再试一次。", moveUp: "上移", moveDown: "下移", position: "位置", skip: "跳过" },
 };
 
 const localized = (value) => typeof value === "string" ? value : value?.[state.locale] ?? value?.en ?? "";
+
+const ACTIVITY_QUERY_KEY = "activity";
+
+function activityIdFromLocation() {
+  if (typeof window === "undefined" || !window.location) return "";
+  try {
+    return new URL(window.location.href).searchParams.get(ACTIVITY_QUERY_KEY) || "";
+  } catch (_error) {
+    return "";
+  }
+}
+
+function applyActivityDeepLink(activities) {
+  const requestedId = activityIdFromLocation();
+  const requestedIndex = requestedId ? activities.findIndex((activity) => activity.id === requestedId) : -1;
+  state.activityIndex = requestedIndex >= 0 ? requestedIndex : 0;
+  resetActivity();
+}
+
+function syncActivityUrl(activity) {
+  if (typeof window === "undefined" || !window.location || !window.history?.replaceState) return;
+  try {
+    const url = new URL(window.location.href);
+    if (activity?.id) url.searchParams.set(ACTIVITY_QUERY_KEY, activity.id);
+    else url.searchParams.delete(ACTIVITY_QUERY_KEY);
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  } catch (_error) {
+    // Rendering must remain usable even when a host blocks History API access.
+  }
+}
 
 function element(tag, { className, text, attributes } = {}) {
   const node = document.createElement(tag);
@@ -151,6 +178,7 @@ function renderResponse(card, activity) {
 }
 
 function renderComplete(root) {
+  syncActivityUrl(null);
   const card = element("section", { className: "card" });
   card.append(
     element("p", { className: "eyebrow", text: localized(state.package.subchapter) }),
@@ -171,6 +199,7 @@ function render() {
   }
 
   const activity = activities[state.activityIndex];
+  syncActivityUrl(activity);
   ensureResponse(activity);
   const labels = copy[state.locale];
   const card = element("section", { className: "card" });
@@ -183,7 +212,7 @@ function render() {
   const progressBar = element("span");
   progressBar.style.width = `${((state.activityIndex + 1) / activities.length) * 100}%`;
   progress.append(progressBar);
-  card.append(progress, element("h1", { text: localized(activity.prompt) }));
+  card.append(progress, element("h1", { className: "question", text: localized(activity.prompt) }));
 
   renderResponse(card, activity);
 
@@ -197,7 +226,7 @@ function render() {
     }));
   }
 
-  const actions = element("div", { className: "choices" });
+  const actions = element("div", { className: "action-row" });
   const checkLabel = state.checked
     ? (responseCorrect(activity) ? labels.next : labels.tryAgain)
     : labels.check;
@@ -212,7 +241,13 @@ function render() {
   const hint = element("button", { className: "action secondary", text: labels.hint, attributes: { id: "hint" } });
   hint.addEventListener("click", () => { state.hint = true; render(); });
   actions.append(check, hint);
-  card.append(actions);
+  const skip = element("button", { className: "action secondary skip-action", text: labels.skip, attributes: { id: "skip" } });
+  skip.addEventListener("click", () => {
+    state.activityIndex += 1;
+    resetActivity();
+    render();
+  });
+  card.append(actions, skip);
   root.replaceChildren(card);
 }
 
@@ -222,15 +257,21 @@ async function loadPackage(packageUrl = DEFAULT_PACKAGE) {
   const generation = ++loadGeneration;
   state.loading = true;
   localeSelector.disabled = true;
+  if (!packageUrl) {
+    state.package = null;
+    state.loading = false;
+    localeSelector.disabled = false;
+    const message = "No learning package was selected. Supply data-package-url in the host page or call loadPackage(packageUrl).";
+    document.querySelector("#app").replaceChildren(element("p", { className: "error", text: message }));
+    return;
+  }
   try {
     const response = await fetch(packageUrl);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const loadedPackage = await response.json();
     if (generation !== loadGeneration) return;
     state.package = loadedPackage;
-    const requestedIndex = loadedPackage.activities.findIndex((activity) => activity.id === requestedActivityId);
-    state.activityIndex = requestedIndex >= 0 ? requestedIndex : 0;
-    resetActivity();
+    applyActivityDeepLink(loadedPackage.activities ?? []);
     state.loading = false;
     localeSelector.disabled = false;
     render();
@@ -239,9 +280,17 @@ async function loadPackage(packageUrl = DEFAULT_PACKAGE) {
     state.package = null;
     state.loading = false;
     localeSelector.disabled = false;
-    const message = `Could not load the Section 1.1 package. Start the app through the documented local server. (${error.message})`;
+    const message = `Could not load the selected learning package. Start the app through the documented local server. (${error.message})`;
     document.querySelector("#app").replaceChildren(element("p", { className: "error", text: message }));
   }
+}
+
+if (typeof window !== "undefined" && window.addEventListener) {
+  window.addEventListener("popstate", () => {
+    if (!state.package) return;
+    applyActivityDeepLink(state.package.activities);
+    render();
+  });
 }
 
 localeSelector.addEventListener("change", (event) => {
