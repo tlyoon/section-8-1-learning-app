@@ -1553,7 +1553,7 @@
       "objective": "Distinguish between internal forces that exchange momentum and external forces that alter system momentum.",
       "prompt": {
         "en": "A field research team defines a mechanical system consisting exclusively of a motorized rover and an attached cargo sled moving together. Classify each force according to whether it is an internal force (which cannot change total system momentum) or an external force (which can change total system momentum).",
-        "ms": "Satu pasukan penyelidik lapangan mentakrifkan sistem mekanikal yang mengandungi secara eksklusif sebuah rover bermotor dan sebuahเลgelongsor kargo yang bergerak bersama. Kelaskan setiap daya sama ada ia merupakan daya dalaman (yang tidak boleh mengubah jumlah momentum sistem) atau daya luaran (yang boleh mengubah jumlah momentum sistem).",
+        "ms": "Satu pasukan penyelidik lapangan mentakrifkan sistem mekanikal yang mengandungi secara eksklusif sebuah rover bermotor dan sebuah kereta luncur kargo yang bergerak bersama. Kelaskan setiap daya sama ada ia merupakan daya dalaman (yang tidak boleh mengubah jumlah momentum sistem) atau daya luaran (yang boleh mengubah jumlah momentum sistem).",
         "zh": "一个野外考察队将一个机械系统严格定义为一同运动的动力巡视车及相连的货运雪橇。请将下列各力分类为内力（不能改变系统总动量）或外力（能够改变系统总动量）。"
       },
       "hints": [
@@ -1564,7 +1564,7 @@
         },
         {
           "en": "Newton's third law guarantees that internal action-reaction pairs cancel each other when summing the forces on the entire system. External forces originate from bodies outside the rover-sled boundary.",
-          "ms": "Hukum Newton ketiga menjamin bahawa pasangan tindakan-tindak balas dalaman saling membatalkan apabila menjumlahkan daya ke atas keseluruhan sistem. Daya luaran berasal daripada jasad di luar sempadan rover-legelongsor.",
+          "ms": "Hukum Newton ketiga menjamin bahawa pasangan tindakan-tindak balas dalaman saling membatalkan apabila menjumlahkan daya ke atas keseluruhan sistem. Daya luaran berasal daripada jasad di luar sempadan rover-kereta luncur.",
           "zh": "牛顿第三定律保证了在对整个系统的力求和时，内部作用力与反作用力对会相互抵消。外力则来源于巡视车-雪橇边界之外的物体。"
         }
       ],
@@ -1575,7 +1575,7 @@
       },
       "answerLogic": {
         "en": "The rover and sled together constitute the system. The coupling tension and collision contact occur solely between these two system members, making them internal forces that sum to zero. Friction from the terrain and aerodynamic drag from atmospheric wind originate from outside bodies, making them external forces that alter the system's total momentum.",
-        "ms": "Rover dan legelongsor bersama-sama membentuk sistem. Ketegangan pengganding dan sentuhan perlanggaran berlaku semata-mata antara dua ahli sistem ini, menjadikannya daya dalaman yang berjumlah sifar. Geseran daripada rupa bumi dan seretan aerodinamik daripada angin atmosfera berasal daripada jasad luar, menjadikannya daya luaran yang mengubah jumlah momentum sistem.",
+        "ms": "Rover dan kereta luncur bersama-sama membentuk sistem. Ketegangan pengganding dan sentuhan perlanggaran berlaku semata-mata antara dua ahli sistem ini, menjadikannya daya dalaman yang berjumlah sifar. Geseran daripada rupa bumi dan seretan aerodinamik daripada angin atmosfera berasal daripada jasad luar, menjadikannya daya luaran yang mengubah jumlah momentum sistem.",
         "zh": "巡视车和雪橇共同构成了该系统。连挂装置的拉力和碰撞接触力仅发生在这两个系统成员之间，因而是合力为零的内力。来自地形的摩擦力以及来自大气风的空气阻力源于外部物体，因而是能够改变系统总动量的外力。"
       },
       "explanation": {
@@ -1596,7 +1596,7 @@
       },
       "accessibilityText": {
         "en": "Interactive classification activity with two categories: Internal Force and External Force. Four interaction forces must be sorted into the appropriate category based on the defined rover-sled system.",
-        "ms": "Aktiviti pengelasan interaktif dengan dua kategori: Daya Dalaman dan Daya Luaran. Empat daya interaksi mesti diisih ke dalam kategori yang sesuai berdasarkan sistem rover-legelongsor yang ditakrifkan.",
+        "ms": "Aktiviti pengelasan interaktif dengan dua kategori: Daya Dalaman dan Daya Luaran. Empat daya interaksi mesti diisih ke dalam kategori yang sesuai berdasarkan sistem rover-kereta luncur yang ditakrifkan.",
         "zh": "具有两个类别的交互式分类活动：内力与外力。需根据所定义的巡视车-雪橇系统，将四种相互作用力归入相应的类别中。"
       },
       "provenance": {
@@ -1628,7 +1628,7 @@
             "id": "item-tow-tension",
             "label": {
               "en": "Tension force exerted by the rigid tow hitch connecting the rover to the sled",
-              "ms": "Daya tegangan yang dikenakan oleh pengganding tunda tegar yang menyambungkan rover ke legelongsor",
+              "ms": "Daya tegangan yang dikenakan oleh pengganding tunda tegar yang menyambungkan rover ke kereta luncur",
               "zh": "连接巡视车与雪橇的刚性牵引挂钩所施加的拉力"
             }
           },
@@ -1636,7 +1636,7 @@
             "id": "item-bumper-impact",
             "label": {
               "en": "Normal impact contact force between the rover's rear bumper and the sled's front chassis during a sudden slowdown",
-              "ms": "Daya sentuhan hentaman normal antara bampar belakang rover dan casis hadapan legelongsor semasa perlahaman mendadak",
+              "ms": "Daya sentuhan hentaman normal antara bampar belakang rover dan casis hadapan kereta luncur semasa perlambatan mendadak",
               "zh": "急减速期间巡视车后保险杠与雪橇前底盘之间的法向碰撞接触力"
             }
           },
@@ -1644,7 +1644,7 @@
             "id": "item-snow-drag",
             "label": {
               "en": "Frictional resistance exerted by the underlying snow surface on the sled runners",
-              "ms": "Rintangan geseran yang dikenakan oleh permukaan salji di bawahnya ke atas peluncur legelongsor",
+              "ms": "Rintangan geseran yang dikenakan oleh permukaan salji di bawahnya ke atas peluncur kereta luncur",
               "zh": "下方雪面对雪橇滑行板施加的摩擦阻力"
             }
           },
